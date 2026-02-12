@@ -391,8 +391,14 @@ let index = 0;
 let maxUnlocked = 0;
 
 function normalize(str) {
-    return String(str).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  return String(str)
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")  // enlève les accents
+    .replace(/[’']/g, "");           // enlève les apostrophes simples et typographiques
 }
+
 
 function typeWriter(element, text, speed = 35) {
     element.textContent = "";
