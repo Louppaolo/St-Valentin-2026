@@ -124,8 +124,11 @@ input {
 .input-group {
     margin-top: 20px;
     display: flex;
-    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
 }
+
 
 .input-wrapper {
     position: relative;
@@ -170,9 +173,12 @@ input {
 
 .error {
     color: #cc0033;
-    margin-top: 10px;
     height: 20px;
+    width: 100%;
+    text-align: center;
 }
+
+
 
 .nav {
     margin-top: 20px;
@@ -189,37 +195,80 @@ input {
     75% { transform: translateX(-5px); }
     100% { transform: translateX(0); }
 }
+
+#homeScreen { text-align: center; }
+.home-title { font-size: 24px; margin-bottom: 25px; }
+
+.home-buttons{
+  display:flex;
+  gap:20px;
+  justify-content:center;
+  align-items:center;
+  flex-wrap: wrap;
+}
+
 </style>
 </head>
 
 <body>
 
 <div class="glow"></div>
+
 <div class="container" id="contenu">
+  <div id="homeScreen">
+      <h1 class="home-title">
+          Bonjour ma beauté 💖<br><br>
+          Prête pour une petite chasse au trésor ?
+      </h1>
 
-<h2 id="compteur"></h2>
-<h2>Trouve dans l'endroit ou l'objet dans l'appartement</h2>
-<div class="story" id="story"></div>
-<div class="indice-principal" id="indicePrincipal"></div>
-<div class="indice-secondaire" id="indiceSecondaire"></div>
+      <div class="home-buttons">
+          <button id="btnOui" onclick="commencer()">Commencer</button>
+          <button id="btnNon" onclick="refuser()">Non</button>
+      </div>
+  </div>
 
-<button id="btnIndice" onclick="afficherIndice()">Indice supplémentaire</button>
+  <div id="gameScreen" style="display:none;">
+      <!-- ton contenu existant du jeu -->
+      <h2 id="compteur"></h2>
+      <h2>Trouve dans l'endroit ou l'objet dans l'appartement</h2>
+      <div class="story" id="story"></div>
+      <div class="indice-principal" id="indicePrincipal"></div>
+      <div class="indice-secondaire" id="indiceSecondaire"></div>
 
-<div class="input-group">
-    <div class="input-wrapper">
-        <input type="text" id="codeInput" placeholder="Entrer le code">
-        <button class="heart-btn" onclick="verifierCode()">❤</button>
+      <button id="btnIndice" onclick="afficherIndice()">Indice supplémentaire</button>
+
+      <div class="input-group">
+          <div class="input-wrapper">
+              <input type="text" id="codeInput" placeholder="Entrer le code">
+              <button class="heart-btn" onclick="verifierCode()">❤</button>
+          </div>
+          <div class="error" id="errorMessage"></div>
+      </div>
+
+      <div class="nav">
+          <button onclick="precedent()">Précédent</button>
+          <button onclick="suivant()">Suivant</button>
+      </div>
+  
     </div>
-    <div class="error" id="errorMessage"></div>
+    <div id="endScreen" style="display:none; text-align:center;">
+        <h1 style="font-size:26px; margin-bottom:25px;">
+            Bravo beby
+        </h1>
+
+        <p style="font-size:18px; line-height:1.6;">
+            Ton intelligence n'a d'égal que ta beauté,<br><br>
+            La clé du trésor se trouve juste derrière un smiski qui joue de la guitare.🎸
+            Je ne lui fais pas trop confiance donc va vite la récupérer avant qu'il ne te vole ton butin <br><br>
+            Joyeuse Saint-Valentin <br><br>
+            Je t'aime ❤️<br><br>
+            Ton homme
+        </p>
+    </div>
+
 </div>
 
 
-<div class="nav">
-    <button onclick="precedent()">Précédent</button>
-    <button onclick="suivant()">Suivant</button>
-</div>
-
-</div>
 
 <script>
 
@@ -259,36 +308,84 @@ function createHeart() {
 setInterval(createHeart, 800);
 
 const enigmes = [
-    { story: "Chaque amour commence par un mystère...",
-      indice1: "Un grand rectangle profond, contenant d'autres rectangles, contenant des carrés, remplis de cylindres remplis de trés petits cubes blancs.",
-      indice2: "Ton bec raffole de ces petits cubes blancs.",
-      codes: ["le code"] },
+  {
+    story: "Chaque amour commence par un mystère...",
+    indice1: "Un grand rectangle profond, contenant d'autres rectangles, contenant des carrés, remplis de cylindres remplis de très petits cubes blancs.",
+    indice2: "Ton bec raffole de ces petits cubes blancs.",
+    codes: ["le code"]
+  },
 
-    { story: "Les couleurs racontent parfois nos souvenirs...",
-      indice1: "Èlancé et solide.. comme ton homme.",
-      indice2: "Il nous en a fait voir de toutes les couleurs.",
-      codes: ["le code 2"] },
+  {
+    story: "Les couleurs racontent parfois nos souvenirs...",
+    indice1: "Élancé et solide… comme ton homme.",
+    indice2: "Il nous en a fait voir de toutes les couleurs.",
+    codes: ["le code 2"]
+  },
 
-    { story: "Même dans le chaos, l'amour sait nettoyer les tempêtes...",
-      indice1: "Le meilleur outil de ton homme quand tu l'engueules.",
-      indice2: "Beeeeeuuuurk... t...",
-      codes: ["le code trois"] },
+  {
+    story: "Même dans le chaos, l'amour sait nettoyer les tempêtes...",
+    indice1: "Le meilleur outil de ton homme quand tu l'engueules.",
+    indice2: "Beeeeeuuuurk... t...",
+    codes: ["le code trois"]
+  },
 
-    { story: "Parfois, les évidences nous font voyager inutilement...",
-      indice1: "Allongé, de couleur foncée, il te permet de te déplacer d'un point A à un point B avec plus de confort et de facilité.",
-      indice2: "Tu en as besoin pour marcher dehors.",
-      codes: ["4", 4] },
+  {
+    story: "Même les explorateurs doivent rester propres...",
+    indice1: "Tu viens de toucher le pot de la brosse à caca... va laver tes mains stp",
+    indice2: "TOUT DE SUITE GROSSE CRADO",
+    codes: ["c'est fait"]
+  },
 
-    { story: "Même le mauvais goût peut cacher une surprise...",
-      indice1: "L'objet le plus laid de la maison.",
-      indice2: "Pshhhhhtt...",
-      codes: ["1+1+1+1+1"] },
+  {
+    story: "Même le mauvais goût peut cacher une surprise...",
+    indice1: "L'objet le plus laid de la maison.",
+    indice2: "Pshhhhhtt...",
+    codes: ["1+1+1+1+1"]
+  },
 
-    { story: "Un petit compagnon lumineux s'est caché...",
-      indice1: "J'ai kidnappé un de tes Smiskis. Trouve lequel et entre dans le code l'élément qui en fait sa particularité.",
-      indice2: "",
-      codes: ["travail","ordinateur","bureau","pc","ecran","écran","job","taf"] }
+  {
+    story: "Parfois, les évidences nous font voyager inutilement...",
+    indice1: "Plutôt allongé et de couleur foncée, il ou elle te permet de te déplacer d'un point A à un point B avec plus de confort et de facilité.",
+    indice2: "Tu en as besoin pour marcher dehors.",
+    codes: ["got you !"]
+  },
+
+  {
+    story: "Les plus belles histoires commencent parfois par une simple date...",
+    indice1: "Additionne tous les chiffres de notre date de rencontre.",
+    indice2: "Attention… un chiffre n'est pas un nombre 😉",
+    codes: ["20", 20]
+  },
+
+  {
+    story: "Jalousie quand tu nous tiens...",
+    indice1: "Le principal rival de ton couple. Sache qu'il a lui aussi un cœur.",
+    indice2: "Il a même plusieurs cœurs… et ton homme l'utilise beaucoup trop selon toi !",
+    codes: ["0011011000111001", 69]
+  },
+
+  {
+    story: "Non non pas ce soir, j'ai mal à la tête...",
+    indice1: "Retour au collège… qu'est-ce que C8H9NO2 ?",
+    indice2: "J'ai jamais dit que t'avais pas le droit à Google hein… 😏",
+    codes: ["doliprane"]
+  },
+
+  {
+    story: "L'amour rend aveugle… mais faut pas abuser quand même.",
+    indice1: "Une de tes principales motivations du Japon 🇯🇵",
+    indice2: "Skin care tiiiime ! ✨",
+    codes: ["t'as mis la creme que je t'ai donné ?"]
+  },
+
+  {
+    story: "Un petit compagnon lumineux s'est caché...",
+    indice1: "J'ai kidnappé un de tes Smiskis. Trouve lequel et entre dans le code l'élément qui en fait sa particularité.",
+    indice2: "",
+    codes: ["travail", "ordinateur", "bureau", "pc", "ecran", "écran", "job", "taf"]
+  }
 ];
+
 
 let index = 0;
 let maxUnlocked = 0;
@@ -320,6 +417,24 @@ function updateNavigation() {
         btnNext.style.display = (index < maxUnlocked) ? "inline-block" : "none";
     }
 }
+
+let scaleOui = 1;
+let scaleNon = 1;
+
+function commencer() {
+    document.getElementById("homeScreen").style.display = "none";
+    document.getElementById("gameScreen").style.display = "block";
+    chargerEnigme();
+}
+
+function refuser() {
+    scaleOui *= 1.15;
+    scaleNon *= 0.85;
+
+    document.getElementById("btnOui").style.transform = `scale(${scaleOui})`;
+    document.getElementById("btnNon").style.transform = `scale(${scaleNon})`;
+}
+
 
 function chargerEnigme() {
     document.getElementById("compteur").textContent = "Énigme " + (index + 1);
@@ -356,7 +471,12 @@ function verifierCode() {
 
         maxUnlocked = Math.max(maxUnlocked, index + 1);
         index++;
-        if (index < enigmes.length) chargerEnigme();
+
+        if (index < enigmes.length) {
+            chargerEnigme();
+        } else {
+            afficherFin();
+        }
 
     } else {
         document.getElementById("errorMessage").textContent = "Code incorrect";
@@ -384,12 +504,20 @@ function suivant() {
     }
 }
 
+function afficherFin() {
+    document.getElementById("gameScreen").style.display = "none";
+    document.getElementById("endScreen").style.display = "block";
+    for(let i=0;i<15;i++){
+    setTimeout(createHeart, i*200);
+    }
+    soundSuccess.play();
+}
+
+
 document.getElementById("codeInput")
 .addEventListener("keypress", e => {
     if (e.key === "Enter") verifierCode();
 });
-
-chargerEnigme();
 
 </script>
 
