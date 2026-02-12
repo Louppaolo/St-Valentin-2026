@@ -1,2 +1,3 @@
 # St-Valentin-2026
-Beauté
+Petit site pour la st valentin
+
