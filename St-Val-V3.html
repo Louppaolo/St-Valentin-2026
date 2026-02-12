@@ -224,17 +224,27 @@ input {
 <script>
 
 // Sons
-const soundSuccess = new Audio("/success.wav");
-const soundError = new Audio("/error.wav");
-
+const soundSuccess = new Audio("ily.mp3");
+const soundError = new Audio("error.wav");
 
 soundSuccess.volume = 0.6;
 soundError.volume = 0.6;
 
-document.addEventListener("click", () => {
-    soundSuccess.load();
-    soundError.load();
-}, { once: true });
+function unlockAudio() {
+    soundSuccess.play().then(() => {
+        soundSuccess.pause();
+        soundSuccess.currentTime = 0;
+    }).catch(()=>{});
+
+    soundError.play().then(() => {
+        soundError.pause();
+        soundError.currentTime = 0;
+    }).catch(()=>{});
+
+    document.removeEventListener("click", unlockAudio);
+}
+
+document.addEventListener("click", unlockAudio);
 
 function createHeart() {
     const heart = document.createElement("div");
