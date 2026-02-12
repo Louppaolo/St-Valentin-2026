@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Énigmes de l’Amour</title>
+
+<style>
+body {
+    margin: 0;
+    background: linear-gradient(135deg, #ffe6eb, #ffd6e0);
+    color: #6b1e3b;
+    font-family: 'Georgia', serif;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+}
+
+.glow {
+    position: absolute;
+    width: 70vw;
+    height: 70vw;
+    max-width: 600px;
+    max-height: 600px;
+    background: radial-gradient(circle, rgba(255,182,193,0.35) 0%, transparent 70%);
+    animation: pulse 5s ease-in-out infinite;
+    pointer-events: none;
+}
+
+@keyframes pulse {
+    0%,100% { opacity: 0.6; transform: scale(1); }
+    50% { opacity: 1; transform: scale(1.08); }
+}
+
+.heart {
+    position: absolute;
+    color: rgba(255, 105, 135, 0.6);
+    animation: floatUp linear infinite;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    from { transform: translateY(100vh); opacity: 0; }
+    10% { opacity: 1; }
+    to { transform: translateY(-10vh); opacity: 0; }
+}
+
+.container {
+    position: relative;
+    z-index: 2;
+    width: 90%;
+    max-width: 500px;
+    text-align: center;
+    padding: 20px;
+    transition: opacity 0.5s ease;
+}
+
+h2 {
+    font-size: 15px;
+    color: #a64d79;
+}
+
+.story {
+    font-style: italic;
+    margin-bottom: 18px;
+    font-size: 15px;
+    opacity: 0.85;
+}
+
+.indice-principal {
+    font-size: 26px;
+    line-height: 1.4;
+    margin-bottom: 18px;
+    font-weight: 600;
+}
+
+.indice-secondaire {
+    margin-bottom: 25px;
+    font-size: 17px;
+    color: #a64d79;
+}
+
+button {
+    padding: 10px 18px;
+    font-size: 14px;
+    border-radius: 25px;
+    border: 1px solid #a64d79;
+    background: transparent;
+    color: #a64d79;
+    transition: 0.3s;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #a64d79;
+    color: white;
+}
+
+input {
+    padding: 10px;
+    font-size: 15px;
+    width: 100%;
+    max-width: 260px;
+    border-radius: 25px;
+    border: 1px solid #a64d79;
+    text-align: center;
+}
+
+.error {
+    color: #cc0033;
+    margin-top: 10px;
+    height: 20px;
+}
+
+.nav {
+    margin-top: 20px;
+}
+
+.shake {
+    animation: shake 0.3s;
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    50% { transform: translateX(5px); }
+    75% { transform: translateX(-5px); }
+    100% { transform: translateX(0); }
+}
+</style>
+</head>
+
+<body>
+
+<div class="glow"></div>
+<div class="container" id="contenu">
+
+<h2 id="compteur"></h2>
+<div class="story" id="story"></div>
+<div class="indice-principal" id="indicePrincipal"></div>
+<div class="indice-secondaire" id="indiceSecondaire"></div>
+
+<button id="btnIndice" onclick="afficherIndice()">Indice supplémentaire</button>
+
+<div style="margin-top:20px;">
+    <input type="text" id="codeInput" placeholder="Entrer le code">
+    <button onclick="verifierCode()">➡</button>
+    <div class="error" id="errorMessage"></div>
+</div>
+
+<div class="nav">
+    <button onclick="precedent()">⬅ Précédent</button>
+    <button onclick="suivant()">Suivant ➡</button>
+</div>
+
+</div>
+
+<script>
+
+function createHeart() {
+    const heart = document.createElement("div");
+    heart.className = "heart";
+    heart.innerHTML = "❤";
+    heart.style.left = Math.random() * 100 + "vw";
+    heart.style.fontSize = (14 + Math.random() * 18) + "px";
+    heart.style.animationDuration = (6 + Math.random() * 4) + "s";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 10000);
+}
+setInterval(createHeart, 800);
+
+const enigmes = [
+    { story: "Chaque amour commence par un mystère...",
+      indice1: "Un grand rectangle contenant d'autres rectangles, contenant des carrés remplis de cylindres remplis de petits cubes blancs.",
+      indice2: "Ton bec raffole de ces petits cubes blancs.",
+      codes: ["le code"] },
+
+    { story: "Les couleurs racontent parfois nos souvenirs...",
+      indice1: "élancé et solide.. comme ton homme.",
+      indice2: "Il nous en a fait voir de toutes les couleurs.",
+      codes: ["le code 2"] },
+
+    { story: "Même dans le chaos, l'amour sait nettoyer les tempêtes...",
+      indice1: "Le meilleur outil de ton homme quand tu l'engueules.",
+      indice2: "Beeeeeuuuurk... t...",
+      codes: ["le code trois"] },
+
+    { story: "Parfois, les évidences nous font voyager inutilement...",
+      indice1: "Allongé, de couleur foncée, il te permet de te déplacer d'un point A à un point B avec plus de confort et de facilité.",
+      indice2: "Tu en as besoin pour marcher dehors.",
+      codes: ["4", 4] },
+
+    { story: "Même le mauvais goût peut cacher une surprise...",
+      indice1: "L'objet le plus laid de la maison.",
+      indice2: "Pshhhhhtt...",
+      codes: ["1+1+1+1+1"] },
+
+    { story: "Un petit compagnon lumineux s'est caché...",
+      indice1: "J'ai kidnappé un de tes Smiskis. Trouve lequel et entre dans le code l'élément qui en fait sa particularité.",
+      indice2: "",
+      codes: ["travail","ordinateur","bureau","pc","ecran","écran","job","taf"] }
+];
+
+let index = 0;
+let maxUnlocked = 0;
+
+function normalize(str) {
+    return String(str).trim().toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
+function typeWriter(element, text, speed = 35) {
+    element.textContent = "";
+    let i = 0;
+    const interval = setInterval(() => {
+        element.textContent += text.charAt(i);
+        i++;
+        if (i >= text.length) clearInterval(interval);
+    }, speed);
+}
+
+function updateNavigation() {
+    const nav = document.querySelector(".nav");
+    const btnPrev = nav.children[0];
+    const btnNext = nav.children[1];
+
+    if (index === 0) {
+        nav.style.display = "none";
+    } else {
+        nav.style.display = "block";
+        btnPrev.style.display = "inline-block";
+        btnNext.style.display = (index < maxUnlocked) ? "inline-block" : "none";
+    }
+}
+
+function chargerEnigme() {
+    const container = document.getElementById("contenu");
+    container.style.opacity = "0";
+
+    setTimeout(() => {
+
+        document.getElementById("compteur").textContent = "Énigme " + (index + 1);
+        document.getElementById("story").textContent = "";
+        document.getElementById("indicePrincipal").textContent = "";
+        document.getElementById("indiceSecondaire").textContent = "";
+        document.getElementById("errorMessage").textContent = "";
+        document.getElementById("codeInput").value = "";
+
+        document.getElementById("btnIndice").style.display =
+            enigmes[index].indice2 ? "inline-block" : "none";
+
+        updateNavigation();
+
+        container.style.opacity = "1";
+
+        setTimeout(() => {
+            typeWriter(document.getElementById("story"), enigmes[index].story, 25);
+            setTimeout(() => {
+                typeWriter(document.getElementById("indicePrincipal"), enigmes[index].indice1, 35);
+            }, 600);
+        }, 300);
+
+    }, 500);
+}
+
+function afficherIndice() {
+    typeWriter(document.getElementById("indiceSecondaire"), enigmes[index].indice2, 30);
+    document.getElementById("btnIndice").style.display = "none";
+}
+
+function verifierCode() {
+    const valeur = normalize(document.getElementById("codeInput").value);
+    const bonnes = enigmes[index].codes.map(c => normalize(c));
+
+    if (bonnes.includes(valeur)) {
+        maxUnlocked = Math.max(maxUnlocked, index + 1);
+        index++;
+
+        if (index < enigmes.length) {
+            chargerEnigme();
+        } else {
+            
+
+const audio = new Audio("https://cdn.pixabay.com/download/audio/2022/03/15/audio_5b6d8c4d9c.mp3?filename=romantic-background-112191.mp3");
+audio.loop = true;
+audio.volume = 0.5;
+audio.play();
+
+document.body.innerHTML = `
+<style>
+@keyframes fadeInFinal {
+    from { opacity: 0; transform: scale(0.9); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes explode {
+    0% { transform: scale(0); opacity: 1; }
+    80% { transform: scale(1.5); opacity: 1; }
+    100% { transform: scale(2); opacity: 0; }
+}
+
+.final-container {
+    height:100vh;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+    text-align:center;
+    background: linear-gradient(135deg, #ffe6eb, #ffd6e0);
+    color:#6b1e3b;
+    font-family: Georgia, serif;
+    padding:40px;
+    animation: fadeInFinal 2s ease forwards;
+}
+
+.big-heart {
+    position:absolute;
+    font-size:100px;
+    animation: explode 1.5s ease-out forwards;
+    pointer-events:none;
+}
+</style>
+
+<div class="final-container">
+    <div style="max-width:600px; line-height:1.8;">
+        <p style="font-size:22px; margin-bottom:40px;">
+        J'ai confié la <strong>clé du trésor</strong> au Smiski qui joue de la guitare…<br>
+        Va vite la récupérer avant qu'il ne te vole ton butin !
+        </p>
+
+        <h1 style="margin-bottom:30px;">
+        💖 Joyeuse Saint-Valentin ma beauté 💖
+        </h1>
+
+        <h2 style="margin-bottom:40px;">
+        Je t'aime
+        </h2>
+
+        <p style="font-size:18px; opacity:0.8;">
+        Ton homme
+        </p>
+    </div>
+</div>
+`;
+
+// Explosion de gros cœurs
+function createBigHeart() {
+    const heart = document.createElement("div");
+    heart.className = "big-heart";
+    heart.innerHTML = "💖";
+    heart.style.left = Math.random() * 80 + 10 + "vw";
+    heart.style.top = Math.random() * 80 + 10 + "vh";
+    document.body.appendChild(heart);
+    setTimeout(() => heart.remove(), 1500);
+}
+
+setInterval(createBigHeart, 400);
+}
+    } else {
+        document.getElementById("errorMessage").textContent = "Code incorrect";
+        document.getElementById("codeInput").classList.add("shake");
+        setTimeout(() =>
+            document.getElementById("codeInput").classList.remove("shake"), 300);
+    }
+}
+
+function precedent() {
+    if (index > 0) {
+        index--;
+        chargerEnigme();
+    }
+}
+
+function suivant() {
+    if (index < maxUnlocked) {
+        index++;
+        chargerEnigme();
+    }
+}
+
+document.getElementById("codeInput")
+.addEventListener("keypress", e => {
+    if (e.key === "Enter") verifierCode();
+});
+
+chargerEnigme();
+
+</script>
+
+</body>
+</html>
